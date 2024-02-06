@@ -1,24 +1,27 @@
 import streamlit as st
 import requests
-from bs4 import BeautifulSoup
 from PIL import Image
 import numpy as np
 import pandas as pd
 import umap
 from sklearn.cluster import DBSCAN
+import unsplash
 
-# Function to gather images and text
-def gather_images(url): 
-    response = requests.get(url)
-    soup = BeautifulSoup(response.content, "html.parser")
+# Set your Unsplash access key
+unsplash.set_api_key("MFcvfNHZ-u_kRAhK4oHT2uIIYtWVTxI-pk8qbr4sIR8")
+
+# Function to gather images from Unsplash
+def gather_images(query):
+    photos = unsplash.search.photos(query=query, per_page=30)  # Adjust per_page as needed
     images = []
     descriptions = []
-    for img in soup.find_all("img"):
-        src = img.get("src")
+    for photo in photos.entries:
+        url = photo.urls.regular
         try:
-            image = Image.open(requests.get(src, stream=True).raw)
+            response = requests.get(url, stream=True)
+            image = Image.open(response.raw)
             images.append(image)
-            descriptions.append(img.get("alt", ""))  # Use alt text as description
+            descriptions.append(photo.alt_description)
         except Exception as e:
             print(f"Error fetching image: {e}")
     return images, descriptions
@@ -45,12 +48,12 @@ def cluster_images(data, clustering_algorithm):
     return clusters
 
 # Streamlit app structure
-st.title("Product Image Clustering")
+st.title("Product Image Clustering with Unsplash")
 
-url = st.text_input("Enter website URL to crawl:")
+query = st.text_input("Enter search query for Unsplash:")
 
 if st.button("Gather Images"):
-    images, descriptions = gather_images(url)
+    images, descriptions = gather_images(query)
 
     cluster_by = st.radio("Cluster by:", ("Image Similarity", "Text Similarity"))
 
