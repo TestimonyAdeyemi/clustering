@@ -5,6 +5,4 @@ umap-learn
 keras
 tensorflow
 python-unsplash
-pillow
-io
 pytesseract
