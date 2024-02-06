@@ -3,3 +3,4 @@ requests
 scikit-learn
 umap
 keras
+tensorflow
