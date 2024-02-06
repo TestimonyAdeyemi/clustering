@@ -1,72 +1,59 @@
 import streamlit as st
 import requests
-from PIL import Image
+import os
+import shutil
 import numpy as np
-import pandas as pd
-import umap
-from sklearn.cluster import DBSCAN
-import unsplash
+from PIL import Image
+from io import BytesIO
+from sklearn.cluster import KMeans
 
-# Set your Unsplash access key
-unsplash.set_api_key("MFcvfNHZ-u_kRAhK4oHT2uIIYtWVTxI-pk8qbr4sIR8")
+# Define your Unsplash API access key
+UNSPLASH_ACCESS_KEY = "MFcvfNHZ-u_kRAhK4oHT2uIIYtWVTxI-pk8qbr4sIR8"
 
-# Function to gather images from Unsplash
-def gather_images(query):
-    photos = unsplash.search.photos(query=query, per_page=30)  # Adjust per_page as needed
+def fetch_images(query, count=10):
+    url = f"https://api.unsplash.com/search/photos/?query={query}&client_id={UNSPLASH_ACCESS_KEY}&per_page={count}"
+    response = requests.get(url)
+    data = response.json()
+    return [photo['urls']['regular'] for photo in data['results']]
+
+def download_images(urls, folder_name='images'):
+    os.makedirs(folder_name, exist_ok=True)
+    for i, url in enumerate(urls):
+        response = requests.get(url)
+        img = Image.open(BytesIO(response.content))
+        img.save(f"{folder_name}/image_{i}.jpg")
+
+def cluster_images(image_folder, num_clusters=3):
+    image_files = os.listdir(image_folder)
     images = []
-    descriptions = []
-    for photo in photos.entries:
-        url = photo.urls.regular
-        try:
-            response = requests.get(url, stream=True)
-            image = Image.open(response.raw)
-            images.append(image)
-            descriptions.append(photo.alt_description)
-        except Exception as e:
-            print(f"Error fetching image: {e}")
-    return images, descriptions
+    for image_file in image_files:
+        img = Image.open(os.path.join(image_folder, image_file))
+        img_array = np.array(img)
+        images.append(img_array.flatten())
+    
+    kmeans = KMeans(n_clusters=num_clusters)
+    kmeans.fit(images)
+    return kmeans.labels_
 
-# Function to extract image features (optional)
-def extract_image_features(images):
-    from keras.applications.vgg16 import VGG16, preprocess_input
-    model = VGG16(weights='imagenet', include_top=False)
-    features = []
-    for image in images:
-        image = np.expand_dims(image, axis=0)
-        image = preprocess_input(image)
-        features.append(model.predict(image).flatten())
-    return np.array(features)
+# Streamlit UI
+st.title("Image Clustering from Unsplash")
 
-# Function to cluster images
-def cluster_images(data, clustering_algorithm):
-    # print(data.shape)
-    # data = data.reshape(-1, 1)
-    st.write(len(images))
-    st.write(len(descriptions))
-    embedding = umap.UMAP().fit_transform(data)
-    clusters = clustering_algorithm.fit_predict(embedding)
-    return clusters
+query = st.text_input("Enter search query:", "landscape")
+num_images = st.slider("Number of images to fetch:", 1, 20, 10)
+num_clusters = st.slider("Number of clusters:", 2, 10, 3)
 
-# Streamlit app structure
-st.title("Product Image Clustering with Unsplash")
-
-query = st.text_input("Enter search query for Unsplash:")
-
-if st.button("Gather Images"):
-    images, descriptions = gather_images(query)
-
-    cluster_by = st.radio("Cluster by:", ("Image Similarity", "Text Similarity"))
-
-    if cluster_by == "Image Similarity":
-        features = extract_image_features(images)
-        clusters = cluster_images(features, DBSCAN())  # Replace with your chosen algorithm
-    else:  # Text Similarity
-        # Implement text-based clustering here
-        pass
-
-    # Display clusters
-    for cluster_id in np.unique(clusters):
-        st.header(f"Cluster {cluster_id}")
-        for i, image in enumerate(images):
-            if clusters[i] == cluster_id:
-                st.image(image, caption=descriptions[i])
+if st.button("Fetch and Cluster Images"):
+    st.write("Fetching images...")
+    image_urls = fetch_images(query, num_images)
+    st.write(f"Fetched {len(image_urls)} images.")
+    
+    st.write("Downloading images...")
+    download_images(image_urls)
+    st.write("Images downloaded successfully.")
+    
+    st.write("Clustering images...")
+    labels = cluster_images('images', num_clusters)
+    st.write("Images clustered successfully.")
+    
+    st.write("Cluster labels:")
+    st.write(labels)
