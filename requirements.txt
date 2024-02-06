@@ -6,6 +6,5 @@ keras
 tensorflow
 python-unsplash
 pillow
-shutil
 io
 pytesseract
