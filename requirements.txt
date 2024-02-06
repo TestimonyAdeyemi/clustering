@@ -1,6 +1,6 @@
 bs4
 requests
 scikit-learn
-umap
+umap-learn
 keras
 tensorflow
