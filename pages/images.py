@@ -34,8 +34,7 @@ def cluster_images(image_folder, num_clusters=3, resize_dims=(100, 100)):
     
     kmeans = KMeans(n_clusters=num_clusters)
     kmeans.fit(images)
-    return kmeans.labels_
-
+    return image_files, kmeans.labels_
 
 # Streamlit UI
 st.title("Image Clustering from Unsplash")
@@ -54,8 +53,12 @@ if st.button("Fetch and Cluster Images"):
     st.write("Images downloaded successfully.")
     
     st.write("Clustering images...")
-    labels = cluster_images('images', num_clusters)
+    image_files, labels = cluster_images('images', num_clusters)
     st.write("Images clustered successfully.")
     
     st.write("Cluster labels:")
     st.write(labels)
+    
+    st.write("Displaying images with labels:")
+    for image_file, label in zip(image_files, labels):
+        st.image(f'images/{image_file}', caption=f'Cluster: {label}', use_column_width=True)
