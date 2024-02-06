@@ -36,8 +36,10 @@ def extract_image_features(images):
 
 # Function to cluster images
 def cluster_images(data, clustering_algorithm):
-    print(data.shape)
-    data = data.reshape(-1, 1)
+    # print(data.shape)
+    # data = data.reshape(-1, 1)
+    st.write(len(images))
+    st.write(len(descriptions))
     embedding = umap.UMAP().fit_transform(data)
     clusters = clustering_algorithm.fit_predict(embedding)
     return clusters
