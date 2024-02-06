@@ -23,17 +23,19 @@ def download_images(urls, folder_name='images'):
         img = Image.open(BytesIO(response.content))
         img.save(f"{folder_name}/image_{i}.jpg")
 
-def cluster_images(image_folder, num_clusters=3):
+def cluster_images(image_folder, num_clusters=3, resize_dims=(100, 100)):
     image_files = os.listdir(image_folder)
     images = []
     for image_file in image_files:
         img = Image.open(os.path.join(image_folder, image_file))
+        img = img.resize(resize_dims)
         img_array = np.array(img)
         images.append(img_array.flatten())
     
     kmeans = KMeans(n_clusters=num_clusters)
     kmeans.fit(images)
     return kmeans.labels_
+
 
 # Streamlit UI
 st.title("Image Clustering from Unsplash")
