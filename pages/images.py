@@ -29,8 +29,11 @@ def download_images(urls, folder_name='images'):
 
 def cluster_images(image_folder, descriptions, num_clusters=3, resize_dims=(100, 100)):
     image_files = os.listdir(image_folder)
+    valid_descriptions = [desc for desc in descriptions if desc is not None]
     images = []
-    for image_file in image_files:
+    for image_file, desc in zip(image_files, descriptions):
+        if desc is None:
+            continue
         img = Image.open(os.path.join(image_folder, image_file))
         img = img.resize(resize_dims)
         img_array = np.array(img)
@@ -40,12 +43,12 @@ def cluster_images(image_folder, descriptions, num_clusters=3, resize_dims=(100,
     kmeans.fit(images)
     
     vectorizer = TfidfVectorizer(stop_words='english', max_df=0.5, min_df=2)
-    text_features = vectorizer.fit_transform(descriptions)
+    text_features = vectorizer.fit_transform(valid_descriptions)
     
     km = KMeans(n_clusters=num_clusters)
     km.fit(text_features)
     
-    return image_files, kmeans.labels_, km.labels_
+    return [file for file, desc in zip(image_files, descriptions) if desc is not None], kmeans.labels_, km.labels_
 
 # Streamlit UI
 st.title("Image Clustering from Unsplash")
