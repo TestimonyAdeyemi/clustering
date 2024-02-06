@@ -78,13 +78,23 @@ if st.button("Fetch and Cluster Images"):
         st.write("Cluster labels (Text Description):")
         st.write(text_labels)
     
-    st.write("Displaying images with labels:")
-    if image_labels is not None:
-        for image_file, image_label in zip(image_files, image_labels):
-            st.image(f'images/{image_file}', caption=f'Image Cluster: {image_label}', use_column_width=True)
-    elif text_labels is not None:
-        for image_file, text_label in zip(image_files, text_labels):
-            st.image(f'images/{image_file}', caption=f'Text Cluster: {text_label}', use_column_width=True)
-    else:
-        for image_file in image_files:
-            st.image(f'images/{image_file}', use_column_width=True)
+    # st.write("Displaying images with labels:")
+    # if image_labels is not None:
+    #     for image_file, image_label in zip(image_files, image_labels):
+    #         st.image(f'images/{image_file}', caption=f'Image Cluster: {image_label}', use_column_width=True)
+    # elif text_labels is not None:
+    #     for image_file, text_label in zip(image_files, text_labels):
+    #         st.image(f'images/{image_file}', caption=f'Text Cluster: {text_label}', use_column_width=True)
+    # else:
+    #     for image_file in image_files:
+    #         st.image(f'images/{image_file}', use_column_width=True)
+
+    st.write("Displaying images with labels and descriptions:")
+    for image_file, image_label, text_label, description in zip(image_files, image_labels or [None]*len(image_files), text_labels or [None]*len(image_files), descriptions):
+        st.image(f'images/{image_file}', caption=f'Image Cluster: {image_label}, Text Cluster: {text_label}', use_column_width=True)
+        if description:
+            st.write(description)
+        else:
+            st.write("No description available.")
+        st.write("---")
+
