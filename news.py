@@ -8,6 +8,8 @@ from sklearn.cluster import KMeans
 
 LOKY_MAX_CPU_COUNT = 5
 
+st.set_page_config(page_title="News")
+
 # API endpoint to fetch news articles
 news_api_url = "https://newsapi.org/v2/top-headlines?country=us&apiKey=f29914eab5a34bd99550b4f9ca44056c"
 
