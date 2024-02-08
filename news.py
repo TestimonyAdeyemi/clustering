@@ -12,10 +12,10 @@ LOKY_MAX_CPU_COUNT = 5
 st.set_page_config(page_title="News")
 
 # API endpoint to fetch news articles
-news_api_url = "https://newsapi.org/v2/top-headlines?country=us&apiKey=f29914eab5a34bd99550b4f9ca44056c"
+news_api_url = "https://newsapi.org/v2/top-headlines?country=us&apiKey=8f41f07af3f244d58cc75ee2d238656b"
 
 # Replace with your API key
-YOUR_API_KEY = "f29914eab5a34bd99550b4f9ca44056c"
+YOUR_API_KEY = "8f41f07af3f244d58cc75ee2d238656b"
 
 # Number of clusters
 n_clusters = 5
