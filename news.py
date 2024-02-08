@@ -38,6 +38,8 @@ def fetch_news():
             json.dump({"date": current_date, "articles": articles}, f)
     return articles
 
+n_clusters = 3  # Adjust the number of clusters
+
 def main():
     st.title("News Article Clusters")
 
@@ -45,8 +47,18 @@ def main():
     articles = fetch_news()[:5]  # Limit to 5 articles per day
 
     # Extract article titles and text content
-    titles = [article["title"] for article in articles]
-    contents = [article["description"] or article["content"] for article in articles if article.get("description") or article.get("content")]
+    titles = []
+    contents = []
+    for article in articles:
+        title = article.get("title")
+        content = article.get("description") or article.get("content")
+        if content:
+            titles.append(title)
+            contents.append(content)
+
+    if len(contents) < n_clusters:
+        st.error("Insufficient articles to perform clustering.")
+        return
 
     # Cluster articles
     vectorizer = TfidfVectorizer()
@@ -57,9 +69,9 @@ def main():
     # Display clusters
     for i in range(n_clusters):
         st.header(f"Cluster {i+1}")
-        cluster_articles = [articles[j] for j, label in enumerate(kmeans.labels_) if label == i]
-        for article in cluster_articles:
-            st.markdown(f"* [{article['title']}]({article['url']})")
+        cluster_articles = [titles[j] for j, label in enumerate(kmeans.labels_) if label == i]
+        for article_title in cluster_articles:
+            st.markdown(f"* {article_title}")
 
 if __name__ == "__main__":
     main()
