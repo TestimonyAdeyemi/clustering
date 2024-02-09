@@ -82,31 +82,25 @@ num_images = 40
 num_clusters = st.slider("Number of clusters:", 2, 10, 3)
 use_text_clustering = st.checkbox("Cluster by Text Description")
 
-# if st.button("Fetch and Cluster Images"):
-#     st.write("Fetching images...")
-#     image_urls, descriptions = fetch_images(query, num_images)
-#     st.write(f"Fetched {len(image_urls)} images.")
-
-
 if st.button("Fetch and Cluster Images"):
     st.write("Fetching images...")
-    image_urls, descriptions = fetch_images(query, 40)  # Adjust num_images to 20
+    image_urls, descriptions = fetch_images(query, num_images)
     st.write(f"Fetched {len(image_urls)} images.")
+
+
+# if st.button("Fetch and Cluster Images"):
+#     st.write("Fetching images...")
+#     image_urls, descriptions = fetch_images(query, 20)  # Adjust num_images to 20
+#     st.write(f"Fetched {len(image_urls)} images.")
 
     
     st.write("Downloading images...")
     download_images(image_urls)
     st.write("Images downloaded successfully.")
     
-    # st.write("Clustering images...")
-    # image_files, image_labels, text_labels = cluster_images('images', descriptions, num_clusters, use_text_clustering)
-    # st.write("Images clustered successfully.")
-
-
     st.write("Clustering images...")
-    image_files, image_labels, text_labels = cluster_images('images'[:20], descriptions[:20], num_clusters, use_text_clustering)
+    image_files, image_labels, text_labels = cluster_images('images', descriptions, num_clusters, use_text_clustering)
     st.write("Images clustered successfully.")
-
     
     if image_labels is not None:
         st.write("Cluster labels (Image Content):")
