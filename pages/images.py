@@ -77,7 +77,8 @@ def cluster_images(image_folder, descriptions, num_clusters=3, use_text_clusteri
 st.title("Image Clustering from Unsplash")
 
 query = st.text_input("Enter search query:", "landscape")
-num_images = st.slider("Number of images to fetch:", 1, 20, 10)
+#num_images = st.slider("Number of images to fetch:", 1, 20, 10)
+num_images = 30
 num_clusters = st.slider("Number of clusters:", 2, 10, 3)
 use_text_clustering = st.checkbox("Cluster by Text Description")
 
