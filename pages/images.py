@@ -11,14 +11,33 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import Normalizer
 
-# Define your Unsplash API access key
-UNSPLASH_ACCESS_KEY = "MFcvfNHZ-u_kRAhK4oHT2uIIYtWVTxI-pk8qbr4sIR8"
+
+
+# # Define your Unsplash API access key
+# UNSPLASH_ACCESS_KEY = "MFcvfNHZ-u_kRAhK4oHT2uIIYtWVTxI-pk8qbr4sIR8"
+
+# def fetch_images(query, count=10):
+#     url = f"https://api.unsplash.com/search/photos/?query={query}&client_id={UNSPLASH_ACCESS_KEY}&per_page={count}"
+#     response = requests.get(url)
+#     data = response.json()
+#     return [photo['urls']['regular'] for photo in data['results']], [photo.get('description') for photo in data['results']]
+
+
+import requests
+
+# Define your Pexels API key
+PEXELS_API_KEY = "ktGeWrU3EzKqf7opE81AfZnrxgotkBurMMTB7vD7T5uHTeITlezLxd5T"
 
 def fetch_images(query, count=10):
-    url = f"https://api.unsplash.com/search/photos/?query={query}&client_id={UNSPLASH_ACCESS_KEY}&per_page={count}"
-    response = requests.get(url)
+    url = f"https://api.pexels.com/v1/search?query={query}&per_page={count}"
+    headers = {"Authorization": PEXELS_API_KEY}
+    response = requests.get(url, headers=headers)
     data = response.json()
-    return [photo['urls']['regular'] for photo in data['results']], [photo.get('description') for photo in data['results']]
+    if 'photos' in data:
+        return [photo['src']['original'] for photo in data['photos']], [photo.get('description') for photo in data['photos']]
+    else:
+        return [], []
+
 
 def download_images(urls, folder_name='images'):
     os.makedirs(folder_name, exist_ok=True)
