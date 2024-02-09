@@ -82,10 +82,17 @@ num_images = 40
 num_clusters = st.slider("Number of clusters:", 2, 10, 3)
 use_text_clustering = st.checkbox("Cluster by Text Description")
 
+# if st.button("Fetch and Cluster Images"):
+#     st.write("Fetching images...")
+#     image_urls, descriptions = fetch_images(query, num_images)
+#     st.write(f"Fetched {len(image_urls)} images.")
+
+
 if st.button("Fetch and Cluster Images"):
     st.write("Fetching images...")
-    image_urls, descriptions = fetch_images(query, num_images)
+    image_urls, descriptions = fetch_images(query, 20)  # Adjust num_images to 20
     st.write(f"Fetched {len(image_urls)} images.")
+
     
     st.write("Downloading images...")
     download_images(image_urls)
