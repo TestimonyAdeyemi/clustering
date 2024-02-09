@@ -85,7 +85,8 @@ use_text_clustering = st.checkbox("Cluster by Text Description")
 if st.button("Fetch and Cluster Images"):
     st.write("Fetching images...")
     image_urls, descriptions = fetch_images(query, num_images)
-    st.write(f"Fetched {len(image_urls)} images.")
+    st.write(f"Fetched images.")
+    #st.write(f"Fetched {len(image_urls)} images.")
 
 
 # if st.button("Fetch and Cluster Images"):
