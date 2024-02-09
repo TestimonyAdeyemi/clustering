@@ -16,19 +16,19 @@ from sklearn.preprocessing import Normalizer
 # Define your Unsplash API access key
 UNSPLASH_ACCESS_KEY = "MFcvfNHZ-u_kRAhK4oHT2uIIYtWVTxI-pk8qbr4sIR8"
 
-def fetch_images(query, count=10):
-    url = f"https://api.unsplash.com/search/photos/?query={query}&client_id={UNSPLASH_ACCESS_KEY}&per_page={count}"
-    response = requests.get(url)
-    data = response.json()
-    return [photo['urls']['regular'] for photo in data['results']], [photo.get('description') for photo in data['results']]
-
 # def fetch_images(query, count=10):
-#     per_page = max(count, 30)  # Fetch at least 30 images to ensure we have enough
-#     url = f"https://api.unsplash.com/search/photos/?query={query}&client_id={UNSPLASH_ACCESS_KEY}&per_page={per_page}"
+#     url = f"https://api.unsplash.com/search/photos/?query={query}&client_id={UNSPLASH_ACCESS_KEY}&per_page={count}"
 #     response = requests.get(url)
 #     data = response.json()
-#     results = data['results'][:count]  # Return only the first count images
-#     return [photo['urls']['regular'] for photo in results], [photo.get('description') for photo in results]
+#     return [photo['urls']['regular'] for photo in data['results']], [photo.get('description') for photo in data['results']]
+
+def fetch_images(query, count=10):
+    per_page = max(count, 30)  # Fetch at least 30 images to ensure we have enough
+    url = f"https://api.unsplash.com/search/photos/?query={query}&client_id={UNSPLASH_ACCESS_KEY}&per_page={per_page}"
+    response = requests.get(url)
+    data = response.json()
+    results = data['results'][:count]  # Return only the first count images
+    return [photo['urls']['regular'] for photo in results], [photo.get('description') for photo in results]
 
 
 import urllib.parse
