@@ -98,9 +98,14 @@ if st.button("Fetch and Cluster Images"):
     download_images(image_urls)
     st.write("Images downloaded successfully.")
     
+    # st.write("Clustering images...")
+    # image_files, image_labels, text_labels = cluster_images('images', descriptions, num_clusters, use_text_clustering)
+    # st.write("Images clustered successfully.")
+
     st.write("Clustering images...")
-    image_files, image_labels, text_labels = cluster_images('images', descriptions, num_clusters, use_text_clustering)
+    image_files, image_labels, text_labels = cluster_images('images'[:20], descriptions[:20], num_clusters, use_text_clustering)
     st.write("Images clustered successfully.")
+
     
     if image_labels is not None:
         st.write("Cluster labels (Image Content):")
