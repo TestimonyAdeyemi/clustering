@@ -22,21 +22,32 @@ from sklearn.preprocessing import Normalizer
 #     data = response.json()
 #     return [photo['urls']['regular'] for photo in data['results']], [photo.get('description') for photo in data['results']]
 
-
 import requests
 
 # Define your Pexels API key
-PEXELS_API_KEY = "ktGeWrU3EzKqf7opE81AfZnrxgotkBurMMTB7vD7T5uHTeITlezLxd5T"
+PEXELS_API_KEY = 'ktGeWrU3EzKqf7opE81AfZnrxgotkBurMMTB7vD7T5uHTeITlezLxd5T'
 
-def fetch_images(query, count=10):
-    url = f"https://api.pexels.com/v1/search?query={query}&per_page={count}"
-    headers = {"Authorization": PEXELS_API_KEY}
-    response = requests.get(url, headers=headers)
+def fetch_images(query, count=1):
+    url = f"https://api.pexels.com/v1/search"
+    headers = {
+        "Authorization": PEXELS_API_KEY
+    }
+    params = {
+        "query": query,
+        "per_page": count
+    }
+    response = requests.get(url, headers=headers, params=params)
     data = response.json()
     if 'photos' in data:
         return [photo['src']['original'] for photo in data['photos']], [photo.get('description') for photo in data['photos']]
     else:
         return [], []
+
+# Example usage
+images, descriptions = fetch_images('Nature', count=1)
+st.write(images)
+st.write(descriptions)
+
 
 
 def download_images(urls, folder_name='images'):
