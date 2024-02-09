@@ -76,7 +76,7 @@ def cluster_images(image_folder, descriptions, num_clusters=3, use_text_clusteri
 # Streamlit UI
 st.title("Image Clustering from Unsplash")
 
-query = st.text_input("Enter search query:", "landscape")
+query = st.text_input("Enter search query:", "jewelery")
 #num_images = st.slider("Number of images to fetch:", 1, 20, 10)
 num_images = 40
 num_clusters = st.slider("Number of clusters:", 2, 10, 3)
