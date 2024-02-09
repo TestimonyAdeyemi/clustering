@@ -13,46 +13,14 @@ from sklearn.preprocessing import Normalizer
 
 
 
-# # Define your Unsplash API access key
-# UNSPLASH_ACCESS_KEY = "MFcvfNHZ-u_kRAhK4oHT2uIIYtWVTxI-pk8qbr4sIR8"
-
-# def fetch_images(query, count=10):
-#     url = f"https://api.unsplash.com/search/photos/?query={query}&client_id={UNSPLASH_ACCESS_KEY}&per_page={count}"
-#     response = requests.get(url)
-#     data = response.json()
-#     return [photo['urls']['regular'] for photo in data['results']], [photo.get('description') for photo in data['results']]
-
-import requests
-
-# Define your Pexels API key
-PEXELS_API_KEY = 'ktGeWrU3EzKqf7opE81AfZnrxgotkBurMMTB7vD7T5uHTeITlezLxd5T'
-
-import requests
-import os
-from PIL import Image
-import numpy as np
-from sklearn.cluster import KMeans
-from sklearn.feature_extraction.text import TfidfVectorizer
-import streamlit as st
-
-# Define your Pexels API key
-#PEXELS_API_KEY = 'YOUR_PEXELS_API_KEY'
+# Define your Unsplash API access key
+UNSPLASH_ACCESS_KEY = "MFcvfNHZ-u_kRAhK4oHT2uIIYtWVTxI-pk8qbr4sIR8"
 
 def fetch_images(query, count=10):
-    url = f"https://api.pexels.com/v1/search"
-    headers = {
-        "Authorization": PEXELS_API_KEY
-    }
-    params = {
-        "query": query,
-        "per_page": count
-    }
-    response = requests.get(url, headers=headers, params=params)
+    url = f"https://api.unsplash.com/search/photos/?query={query}&client_id={UNSPLASH_ACCESS_KEY}&per_page={count}"
+    response = requests.get(url)
     data = response.json()
-    if 'photos' in data:
-        return [photo['src']['original'] for photo in data['photos']], [photo.get('description') for photo in data['photos']]
-    else:
-        return [], []
+    return [photo['urls']['regular'] for photo in data['results']], [photo.get('description') for photo in data['results']]
 
 def download_images(urls, folder_name='images'):
     os.makedirs(folder_name, exist_ok=True)
@@ -85,7 +53,7 @@ def cluster_images(image_folder, descriptions, num_clusters=3, use_text_clusteri
         return [file for file, desc in zip(image_files, descriptions) if desc is not None], kmeans.labels_, None
 
 # Streamlit UI
-st.title("Image Clustering from Pexels")
+st.title("Image Clustering from Unsplash")
 
 query = st.text_input("Enter search query:", "landscape")
 num_images = st.slider("Number of images to fetch:", 1, 20, 10)
@@ -112,6 +80,17 @@ if st.button("Fetch and Cluster Images"):
         st.write("Cluster labels (Text Description):")
         st.write(text_labels)
     
+    # st.write("Displaying images with labels:")
+    # if image_labels is not None:
+    #     for image_file, image_label in zip(image_files, image_labels):
+    #         st.image(f'images/{image_file}', caption=f'Image Cluster: {image_label}', use_column_width=True)
+    # elif text_labels is not None:
+    #     for image_file, text_label in zip(image_files, text_labels):
+    #         st.image(f'images/{image_file}', caption=f'Text Cluster: {text_label}', use_column_width=True)
+    # else:
+    #     for image_file in image_files:
+    #         st.image(f'images/{image_file}', use_column_width=True)
+
     st.write("Displaying images with labels and descriptions:")
     if image_labels is not None:
         for image_file, image_label, description in zip(image_files, image_labels, descriptions):
@@ -137,3 +116,5 @@ if st.button("Fetch and Cluster Images"):
             else:
                 st.write("No description available.")
             st.write("---")
+
+
