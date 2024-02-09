@@ -27,7 +27,18 @@ import requests
 # Define your Pexels API key
 PEXELS_API_KEY = 'ktGeWrU3EzKqf7opE81AfZnrxgotkBurMMTB7vD7T5uHTeITlezLxd5T'
 
-def fetch_images(query, count=1):
+import requests
+import os
+from PIL import Image
+import numpy as np
+from sklearn.cluster import KMeans
+from sklearn.feature_extraction.text import TfidfVectorizer
+import streamlit as st
+
+# Define your Pexels API key
+#PEXELS_API_KEY = 'YOUR_PEXELS_API_KEY'
+
+def fetch_images(query, count=10):
     url = f"https://api.pexels.com/v1/search"
     headers = {
         "Authorization": PEXELS_API_KEY
@@ -42,13 +53,6 @@ def fetch_images(query, count=1):
         return [photo['src']['original'] for photo in data['photos']], [photo.get('description') for photo in data['photos']]
     else:
         return [], []
-
-# Example usage
-images, descriptions = fetch_images('Nature', count=1)
-st.write(images)
-st.write(descriptions)
-
-
 
 def download_images(urls, folder_name='images'):
     os.makedirs(folder_name, exist_ok=True)
@@ -81,7 +85,7 @@ def cluster_images(image_folder, descriptions, num_clusters=3, use_text_clusteri
         return [file for file, desc in zip(image_files, descriptions) if desc is not None], kmeans.labels_, None
 
 # Streamlit UI
-st.title("Image Clustering from Unsplash")
+st.title("Image Clustering from Pexels")
 
 query = st.text_input("Enter search query:", "landscape")
 num_images = st.slider("Number of images to fetch:", 1, 20, 10)
@@ -108,17 +112,6 @@ if st.button("Fetch and Cluster Images"):
         st.write("Cluster labels (Text Description):")
         st.write(text_labels)
     
-    # st.write("Displaying images with labels:")
-    # if image_labels is not None:
-    #     for image_file, image_label in zip(image_files, image_labels):
-    #         st.image(f'images/{image_file}', caption=f'Image Cluster: {image_label}', use_column_width=True)
-    # elif text_labels is not None:
-    #     for image_file, text_label in zip(image_files, text_labels):
-    #         st.image(f'images/{image_file}', caption=f'Text Cluster: {text_label}', use_column_width=True)
-    # else:
-    #     for image_file in image_files:
-    #         st.image(f'images/{image_file}', use_column_width=True)
-
     st.write("Displaying images with labels and descriptions:")
     if image_labels is not None:
         for image_file, image_label, description in zip(image_files, image_labels, descriptions):
@@ -144,5 +137,3 @@ if st.button("Fetch and Cluster Images"):
             else:
                 st.write("No description available.")
             st.write("---")
-
-
